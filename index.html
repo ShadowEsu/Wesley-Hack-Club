@@ -1,75 +1,232 @@
 
 <!DOCTYPE html>
-<html lang="en">
-  <head>
+<html lang="en" class="scroll-smooth">
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Wesley Hack Club</title>
+    <title>Wesley Hack Club | Cyber Hub</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-      body {
-        margin: 0;
-        padding: 0;
-        background-color: #000;
-        color: #fff;
-        font-family: 'Rajdhani', sans-serif;
-        overflow-x: hidden;
-      }
-      .font-futuristic {
-        font-family: 'Orbitron', sans-serif;
-      }
-      ::-webkit-scrollbar {
-        width: 8px;
-      }
-      ::-webkit-scrollbar-track {
-        background: #000;
-      }
-      ::-webkit-scrollbar-thumb {
-        background: #39FF14;
-        border-radius: 10px;
-      }
-      .neon-glow {
-        text-shadow: 0 0 10px #39FF14, 0 0 20px #39FF14, 0 0 30px #39FF14;
-      }
-      .neon-purple-glow {
-        text-shadow: 0 0 10px #BF00FF, 0 0 20px #BF00FF;
-      }
-      .glass-card {
-        background: rgba(255, 255, 255, 0.03);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(57, 255, 20, 0.1);
-      }
-      @keyframes scanline {
-        0% { transform: translateY(-100%); }
-        100% { transform: translateY(100%); }
-      }
-      .scanline {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100px;
-        background: linear-gradient(to bottom, transparent, rgba(57, 255, 20, 0.05), transparent);
-        animation: scanline 8s linear infinite;
-        pointer-events: none;
-        z-index: 50;
-      }
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #000;
+            color: #fff;
+            font-family: 'Rajdhani', sans-serif;
+            overflow-x: hidden;
+        }
+        .font-futuristic { font-family: 'Orbitron', sans-serif; }
+        
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #000; }
+        ::-webkit-scrollbar-thumb { background: #39FF14; border-radius: 10px; }
+
+        .neon-glow { text-shadow: 0 0 10px #39FF14, 0 0 20px #39FF14; }
+        .neon-purple-glow { text-shadow: 0 0 10px #BF00FF, 0 0 20px #BF00FF; }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(57, 255, 20, 0.1);
+        }
+
+        @keyframes scanline {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100%); }
+        }
+        .scanline {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100px;
+            background: linear-gradient(to bottom, transparent, rgba(57, 255, 20, 0.05), transparent);
+            animation: scanline 8s linear infinite;
+            pointer-events: none;
+            z-index: 50;
+        }
+
+        .reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+
+        @keyframes scrollTicker {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        .animate-scroll { animation: scrollTicker 30s linear infinite; }
+
+        .nav-scrolled { background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); padding-top: 1rem; padding-bottom: 1rem; border-bottom: 1px solid rgba(57, 255, 20, 0.2); }
+        
+        @keyframes spin-slow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .animate-spin-slow { animation: spin-slow 20s linear infinite; }
     </style>
-  <script type="importmap">
+<script type="importmap">
 {
   "imports": {
-    "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
     "react": "https://esm.sh/react@^19.2.4",
-    "react/": "https://esm.sh/react@^19.2.4/",
-    "lucide-react": "https://esm.sh/lucide-react@^0.563.0"
+    "lucide-react": "https://esm.sh/lucide-react@^0.563.0",
+    "react/": "https://esm.sh/react@^19.2.4/"
   }
 }
 </script>
 </head>
-  <body>
-    <div id="root"></div>
-  </body>
+<body>
+    <div class="scanline"></div>
+    <canvas id="particleCanvas" class="fixed inset-0 -z-10"></canvas>
+    <div class="fixed inset-0 pointer-events-none z-40 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03] mix-blend-overlay"></div>
+
+    <!-- Navigation -->
+    <nav id="navbar" class="fixed top-0 w-full z-50 transition-all duration-300 py-6">
+        <div class="max-w-7xl mx-auto px-6 flex justify-between items-center">
+            <a href="#" class="text-[#39FF14] font-futuristic font-bold text-2xl neon-glow uppercase">WHC</a>
+            <div class="hidden md:flex space-x-8">
+                <a href="#home" class="text-white hover:text-[#39FF14] transition-colors font-medium tracking-wider uppercase text-sm">Home</a>
+                <a href="#about" class="text-white hover:text-[#39FF14] transition-colors font-medium tracking-wider uppercase text-sm">About</a>
+                <a href="#events" class="text-white hover:text-[#39FF14] transition-colors font-medium tracking-wider uppercase text-sm">Events</a>
+                <a href="#projects" class="text-white hover:text-[#39FF14] transition-colors font-medium tracking-wider uppercase text-sm">Projects</a>
+                <a href="#contact" class="text-white hover:text-[#39FF14] transition-colors font-medium tracking-wider uppercase text-sm">Contact</a>
+            </div>
+            <button id="mobileMenuBtn" class="md:hidden text-white">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu Overlay -->
+    <div id="mobileMenu" class="fixed inset-0 bg-black z-[60] flex flex-col items-center justify-center space-y-8 hidden">
+        <button id="closeMenuBtn" class="absolute top-8 right-8 text-white"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
+        <a href="#home" class="text-3xl font-futuristic text-white uppercase mobile-link">Home</a>
+        <a href="#about" class="text-3xl font-futuristic text-white uppercase mobile-link">About</a>
+        <a href="#events" class="text-3xl font-futuristic text-white uppercase mobile-link">Events</a>
+        <a href="#projects" class="text-3xl font-futuristic text-white uppercase mobile-link">Projects</a>
+        <a href="#contact" class="text-3xl font-futuristic text-white uppercase mobile-link">Contact</a>
+    </div>
+
+    <!-- Hero Section -->
+    <section id="home" class="relative min-h-screen flex flex-col justify-center pt-24 px-6">
+        <div class="absolute top-28 left-6 md:left-12 flex items-center space-x-2">
+            <span class="w-2 h-2 bg-[#BF00FF] rounded-full neon-purple-glow animate-pulse"></span>
+            <p class="text-[#BF00FF] font-futuristic text-xs tracking-widest neon-purple-glow">MEMBER COUNT: 20+</p>
+        </div>
+
+        <div class="max-w-7xl mx-auto w-full grid md:grid-cols-2 gap-12 items-center">
+            <div>
+                <h1 class="text-7xl md:text-9xl font-futuristic font-black tracking-tighter leading-none mb-2 text-[#39FF14] neon-glow">WESLEY</h1>
+                <h1 class="text-6xl md:text-8xl font-futuristic font-black tracking-tighter leading-none text-[#39FF14] neon-glow mb-8">HACK CLUB</h1>
+                
+                <div class="max-w-md space-y-4 text-gray-300 text-lg md:text-xl border-l-2 border-[#39FF14]/30 pl-6 mb-10">
+                    <p>Welcome to the Wesley Hack Club page.</p>
+                    <p>Meeting <span class="text-[#39FF14]">Tuesday lunch time</span> in Hamer.</p>
+                    <p class="text-sm text-gray-500 italic">Run by Michael K-F.</p>
+                </div>
+
+                <div class="flex flex-wrap gap-4">
+                    <button class="px-8 py-3 bg-[#39FF14] text-black font-bold font-futuristic hover:bg-white transition-all shadow-[0_0_20px_rgba(57,255,20,0.4)]">JOIN DISCORD</button>
+                    <button class="px-8 py-3 border-2 border-[#39FF14] text-[#39FF14] font-bold font-futuristic hover:bg-[#39FF14]/10 transition-all">VIEW GITHUB</button>
+                </div>
+            </div>
+            <div class="hidden md:flex justify-center relative">
+                <div class="w-80 h-80 border-2 border-[#39FF14]/20 rounded-full animate-spin-slow flex items-center justify-center">
+                    <code class="text-[#39FF14] text-xs font-mono text-center">
+                        &gt; STATUS: ONLINE<br/>&gt; CORE_READY: TRUE<br/>&gt; SYS_INIT_0xFF
+                    </code>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Ticker -->
+    <div class="bg-black border-y border-[#39FF14]/10 py-12 px-6 reveal">
+        <div class="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 mb-16">
+            <div class="text-center"><h3 class="text-4xl font-futuristic font-black text-[#39FF14] neon-glow counter" data-target="20">0</h3><p class="text-gray-500 text-xs mt-2 uppercase tracking-widest">Members</p></div>
+            <div class="text-center"><h3 class="text-4xl font-futuristic font-black text-[#39FF14] neon-glow counter" data-target="15">0</h3><p class="text-gray-500 text-xs mt-2 uppercase tracking-widest">Projects</p></div>
+            <div class="text-center"><h3 class="text-4xl font-futuristic font-black text-[#39FF14] neon-glow counter" data-target="10">0</h3><p class="text-gray-500 text-xs mt-2 uppercase tracking-widest">Events</p></div>
+            <div class="text-center"><h3 class="text-4xl font-futuristic font-black text-[#39FF14] neon-glow counter" data-target="3">0</h3><p class="text-gray-500 text-xs mt-2 uppercase tracking-widest">Hackathons</p></div>
+        </div>
+        <div class="overflow-hidden border border-[#39FF14]/20 py-3 bg-[#39FF14]/5 relative">
+            <div class="flex animate-scroll whitespace-nowrap space-x-12 uppercase text-xs font-futuristic tracking-widest">
+                <span>NEXT MEETING: TUESDAY LUNCH • CTF THIS FRIDAY • BRING A LAPTOP • PROJECTS SHIPPED: 15+ •</span>
+                <span>NEXT MEETING: TUESDAY LUNCH • CTF THIS FRIDAY • BRING A LAPTOP • PROJECTS SHIPPED: 15+ •</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- About Hack Club -->
+    <section id="about" class="py-24 px-6 reveal">
+        <div class="max-w-4xl mx-auto glass-card p-8 md:p-12 border-l-4 border-[#39FF14]">
+            <h2 class="text-3xl md:text-4xl font-futuristic font-bold text-white mb-6 uppercase">Connected to the <span class="text-[#39FF14] neon-glow">Hack Club</span> global network</h2>
+            <p class="text-gray-400 text-lg leading-relaxed mb-6">We focus on project-based learning. Coding is a superpower, and we're here to help you master it by building real-world software and hardware.</p>
+            <div class="flex gap-4">
+                <span class="px-3 py-1 bg-white/5 border border-white/10 text-[10px] font-futuristic uppercase text-gray-400">Student-Led</span>
+                <span class="px-3 py-1 bg-white/5 border border-white/10 text-[10px] font-futuristic uppercase text-gray-400">Project-Based</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Events -->
+    <section id="events" class="py-24 px-6 bg-black reveal">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="text-5xl font-futuristic font-black mb-12 uppercase text-white">Upcoming <span class="text-[#39FF14] neon-glow">Events</span></h2>
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="glass-card p-6 group hover:border-[#39FF14] transition-all">
+                    <div class="text-[#39FF14] font-futuristic text-xl mb-4">OCT 15</div>
+                    <h3 class="text-xl font-bold font-futuristic mb-2 uppercase">Capture The Flag</h3>
+                    <p class="text-gray-500 text-sm mb-6">Compete in a series of security challenges to breach the systems.</p>
+                    <button class="text-[#39FF14] text-xs font-bold font-futuristic border-b border-[#39FF14]/20 pb-1">SAVE EVENT</button>
+                </div>
+                <div class="glass-card p-6 group hover:border-[#39FF14] transition-all">
+                    <div class="text-[#39FF14] font-futuristic text-xl mb-4">OCT 22</div>
+                    <h3 class="text-xl font-bold font-futuristic mb-2 uppercase">Mini Hackathon</h3>
+                    <p class="text-gray-500 text-sm mb-6">Build a working prototype in just one lunch session.</p>
+                    <button class="text-[#39FF14] text-xs font-bold font-futuristic border-b border-[#39FF14]/20 pb-1">SAVE EVENT</button>
+                </div>
+                <div class="glass-card p-6 group hover:border-[#39FF14] transition-all">
+                    <div class="text-[#39FF14] font-futuristic text-xl mb-4">NOV 05</div>
+                    <h3 class="text-xl font-bold font-futuristic mb-2 uppercase">Python Workshop</h3>
+                    <p class="text-gray-500 text-sm mb-6">Automation and scripting basics for absolute beginners.</p>
+                    <button class="text-[#39FF14] text-xs font-bold font-futuristic border-b border-[#39FF14]/20 pb-1">SAVE EVENT</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Calendar Countdown -->
+    <section class="py-24 px-6 reveal">
+        <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center">
+            <div class="glass-card p-10 border-[#BF00FF]/20 relative">
+                <div class="flex justify-between items-center mb-8">
+                    <h3 class="font-futuristic font-bold text-white uppercase">Next Meeting</h3>
+                    <span class="text-red-500 text-xs font-futuristic animate-pulse">LIVE COUNTDOWN</span>
+                </div>
+                <div id="countdown" class="grid grid-cols-4 gap-4 text-center">
+                    <div><div class="text-4xl font-futuristic font-black" id="days">00</div><div class="text-[10px] text-gray-600 font-bold uppercase">Days</div></div>
+                    <div><div class="text-4xl font-futuristic font-black" id="hours">00</div><div class="text-[10px] text-gray-600 font-bold uppercase">Hrs</div></div>
+                    <div><div class="text-4xl font-futuristic font-black" id="mins">00</div><div class="text-[10px] text-gray-600 font-bold uppercase">Min</div></div>
+                    <div><div class="text-4xl font-futuristic font-black" id="secs">00</div><div class="text-[10px] text-gray-600 font-bold uppercase">Sec</div></div>
+                </div>
+            </div>
+            <div>
+                <h2 class="text-4xl font-futuristic font-black mb-6 uppercase">System <span class="text-[#BF00FF] neon-purple-glow">Heartbeat</span></h2>
+                <p class="text-gray-500 text-lg">Our core meetings happen weekly. Be there to sync up, share your progress, and join new project squads.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="contact" class="bg-black py-20 px-6 border-t border-white/5 mt-20">
+        <div class="max-w-7xl mx-auto text-center md:text-left flex flex-col md:flex-row justify-between items-center gap-10">
+            <div>
+                <h2 class="text-2xl font-futuristic font-black text-[#39FF14] neon-glow mb-4 uppercase">Wesley Hack Club</h2>
+                <p class="text-gray-600 text-sm">Founded by Michael K-F and Preston Susanto. Every Tuesday Lunch @ Hamer.</p>
+            </div>
+            <div class="flex gap-8 text-[10px] font-futuristic text-gray-600 tracking-widest uppercase">
+                <a href="#home" class="hover:text-white transition-colors">Home</a>
+                <a href="#about" class="hover:text-white transition-colors">About</a>
+                <a href="#projects" class="hover:text-white transition-colors">Projects</a>
+                <a href="mailto:hello@wesleyhack.club" class="hover:text-white transition-colors">Contact</a>
+            </div>
+        </div>
+    </footer>
+
+    <script type="module" src="./index.tsx"></script>
+</body>
 </html>

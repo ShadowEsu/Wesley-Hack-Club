@@ -1,26 +1,20 @@
-**💚 Wesley Hack Club**
-**Wesley Hack Club is a student-led coding and technology community at Wesley College**, built for students who love creating, hacking, and learning by doing.
-We meet every Tuesday during lunchtime in the Hamer Building, where members collaborate on real projects, prepare for hackathons, compete in Capture-the-Flag challenges, and explore topics ranging from web development and game design to cybersecurity and AI.
-The club is connected to the global Hack Club organization, a worldwide network of student-run programming clubs that empowers students to build projects, ship code, and grow as engineers.
-**Founded by Michael K-F and Preston Susanto, and run by Michael K-F,** Wesley Hack Club focuses on hands-on learning, creativity, and collaboration in an inclusive, high-energy environment.
+<div align="center">
+<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
+</div>
 
-**🚀 What We Do**
-Build real projects (websites, games, tools, Chrome extensions)
-Participate in hackathons and coding competitions
-Run Capture-the-Flag (CTF) cybersecurity challenges
-Host workshops, mini hackathons, and coding sessions
-Collaborate using GitHub, Discord, and modern developer tools
+# Run and deploy your AI Studio app
 
-**👥 Community**
-20+ active members
-Open to beginners and experienced coders
-Strong focus on teamwork, curiosity, and experimentation
+This contains everything you need to run your app locally.
 
-**📅 When & Where**
-When: Every Tuesday, lunchtime
-Where: Hamer Building, Wesley College
+View your app in AI Studio: https://ai.studio/apps/drive/1k-1i8Z5-TOAivbio-f1WZCyUXG8gWBYj
 
-**🔗 Get Involved**
-Join our Discord for announcements and collaboration
-Explore our GitHub to see what we’re building
-Come along and start hacking 🚀
+## Run Locally
+
+**Prerequisites:**  Node.js
+
+
+1. Install dependencies:
+   `npm install`
+2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
+3. Run the app:
+   `npm run dev`
